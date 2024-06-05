@@ -124,3 +124,14 @@ with DAG(
         subject="forex_data_pipeline",
         html_content="<h1>forex_data_pipeline</h1>",
     )
+
+    # Add dependencies between tasks
+    (
+        is_forex_rates_available
+        >> is_forex_currencies_file_available
+        >> downloading_rates
+        >> saving_rates
+        >> creating_forex_rates_table
+        >> forex_processing
+        >> send_email_notification
+    )
