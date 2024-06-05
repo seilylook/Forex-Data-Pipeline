@@ -4,6 +4,8 @@ from airflow.sensors.filesystem import FileSensor
 from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
 from airflow.providers.apache.hive.operators.hive import HiveOperator
+from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
+
 
 from datetime import datetime, timedelta
 import csv
@@ -104,4 +106,12 @@ with DAG(
             FIELDS TERMINATED BY ','
             STORED AS TEXTFILE
         """,
+    )
+
+    # Process the forex rates with Spark - SparkSubmitOperator
+    forex_processing = SparkSubmitOperator(
+        task_id="forex_processing",
+        application="/opt/airflow/dags/scripts/forex_processing.py",
+        conn_id="spark_conn",
+        verbose=False,
     )
